@@ -36,6 +36,8 @@ if (array_key_exists(1, $param_array)) {
 
 if (array_key_exists(2, $param_array) && !array_key_exists(3, $param_array)) {
     echo $handle_obj->$method($param_array[2]);
+} else if (array_key_exists(3, $param_array) && !array_key_exists(4, $param_array)) {
+    echo $handle_obj->$method($param_array[2], $param_array[3]);
 } else if (array_key_exists(5, $param_array)) {
     echo $handle_obj->$method($param_array[2],$param_array[3],$param_array[4],$param_array[5]);
 } else {

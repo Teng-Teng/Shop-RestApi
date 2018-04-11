@@ -81,6 +81,17 @@ class Database {
         return $result;
     }
 
+    public function updateItem($id, $price) {
+        $this->getInstanceConnection();
+        $sql = "UPDATE Item SET price = ? where id = ?";
+
+        $stmt = $this->connection->prepare($sql);
+        $stmt->execute([$price, $id]);
+
+        $updated = $stmt->rowCount();
+        return $updated." record updated successfully. ";
+    }
+
     public function deleteItemById($id) {
         $sql = "DELETE FROM Item WHERE id = :id";
 

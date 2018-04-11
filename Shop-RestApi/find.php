@@ -6,7 +6,7 @@
  * Time: 04:44 PM
  */
 
-class shop {
+class find {
     /**
      *
      */
@@ -29,6 +29,18 @@ class shop {
 //        echo '</pre>';
 
         return $result;
+    }
+
+    public function updateItem($id, $price) {
+        $conn = new Database();
+        $result = $conn->updateItem($id, $price);
+
+        echo '<pre>';
+        print_r($result);
+        echo '</pre>';
+
+        return $result;
+
     }
 
 
