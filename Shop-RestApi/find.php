@@ -35,12 +35,7 @@ class find {
         $conn = new Database();
         $result = $conn->updateItem($id, $price);
 
-        echo '<pre>';
-        print_r($result);
-        echo '</pre>';
-
         return $result;
-
     }
 
 

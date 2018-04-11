@@ -11,24 +11,35 @@ class Database {
 
     private function getInstanceConnection() {
         if (!$this->connection) {
-            $this->connection = new PDO('mysql:host=localhost;dbname=shop_rest;charset=utf8mb4', 'root', 'root');
+            $this->connection = new PDO('mysql:host=localhost;dbname=shop_rest;charset=utf8mb4', 'root', 'root',
+                [
+                PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                //PDO::ATTR_EMULATE_PREPARES   => false,
+                ]);
         }
         return $this->connection;
     }
 
     public function getAllItems() {
-        $this->getInstanceConnection();
+        try {
+            $conn = $this->getInstanceConnection();
 
-        $sql = "SELECT * FROM Item";
+            $conn->beginTransaction();
+            $sql = "SELECT * FROM Item";
+            //create a PDO statement object from connection object
+            // $pdo object run query function and this function return a statement object
+            $stmt = $conn->query($sql);
+            $conn->commit();
 
-        //create a PDO statement object from connection object
-        // $pdo object run query function and this function return a statement object
-        $stmt = $this->connection->query($sql);
-
-        //execute the statement and get all the results
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        return $result;
+            //execute the statement and get all the results
+//            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $result = $stmt->fetchAll();
+            return $result;
+        } catch(PDOException $e) {
+            $conn->rollback();
+            return $sql . "<br>" . $e->getMessage();
+        }
     }
 
     /**
@@ -39,75 +50,99 @@ class Database {
      * @return mixed
      */
     public function insertItem($name, $price, $imageUrl, $description) {
-        $this->getInstanceConnection();
-        $sql = "INSERT INTO Item(name, price, image_url, description) VALUES (:name, :price, :imageUrl, :description)";
+        try {
+            $conn = $this->getInstanceConnection();
 
-        $stmt = $this->connection->prepare($sql);
-        $stmt->execute(
-            array(
-                ':name' => $name,
-                ':price' => $price,
-                ':imageUrl' => $imageUrl,
-                ':description' => $description
-            )
-        );
+            $conn->beginTransaction();
+            $sql = "INSERT INTO Item(name, price, image_url, description) VALUES (:name, :price, :imageUrl, :description)";
 
-        $affected_rows = $stmt->rowCount();
+            $stmt = $conn->prepare($sql);
+            $stmt->execute(
+                array(
+                    ':name' => $name,
+                    ':price' => $price,
+                    ':imageUrl' => $imageUrl,
+                    ':description' => $description
+                )
+            );
+            $conn->commit();
 
-        return $affected_rows;
+            $affected_rows = $stmt->rowCount();
+            return $affected_rows . " record insert successfully. ";
+        } catch(PDOException $e) {
+            $conn->rollback();
+            return $sql . "<br>" . $e->getMessage();
+        }
     }
 
     public function getItemById($id) {
-        $sql = "SELECT * FROM Item where id = :id";
+        try {
+            $conn = $this->getInstanceConnection();
 
-        $stmt = $this->getInstanceConnection()->prepare($sql);
+            $conn->beginTransaction();
+            $sql = "SELECT * FROM Item where id = :id";
+            $stmt = $this->getInstanceConnection()->prepare($sql);
+            $stmt->execute(
+                array(
+                    ':id' => $id
+                )
+            );
+            $conn->commit();
 
-        $stmt->execute(
-            array(
-                ':id' => $id
-            )
-        );
-
-        $Item = $stmt->fetch();
-
-        $result = array(
-            'id' => $Item['id'],
-            'name' => $Item['name'],
-            'price' => $Item['price'],
-            'imageUrl' => $Item['image_url'],
-            'description' => $Item['description']
-        );
-
-        return $result;
+            $Item = $stmt->fetch();
+            $result = array(
+                'id' => $Item['id'],
+                'name' => $Item['name'],
+                'price' => $Item['price'],
+                'imageUrl' => $Item['image_url'],
+                'description' => $Item['description']
+            );
+            return $result;
+        } catch(PDOException $e) {
+            $conn->rollback();
+            return $sql . "<br>" . $e->getMessage();
+        }
     }
 
     public function updateItem($id, $price) {
-        $this->getInstanceConnection();
-        $sql = "UPDATE Item SET price = ? where id = ?";
+        try {
+            $conn = $this->getInstanceConnection();
 
-        $stmt = $this->connection->prepare($sql);
-        $stmt->execute([$price, $id]);
+            $conn->beginTransaction();
+            $sql = "UPDATE Item SET price = ? where id = ?";
+            $stmt = $this->getInstanceConnection()->prepare($sql);
+            $stmt->execute([$price, $id]);
+            $conn->commit();
 
-        $updated = $stmt->rowCount();
-        return $updated." record updated successfully. ";
+            $updated = $stmt->rowCount();
+            return $updated." record update successfully.";
+        } catch(PDOException $e) {
+            $conn->rollback();
+            return $sql . "<br>" . $e->getMessage();
+        }
     }
 
     public function deleteItemById($id) {
-        $sql = "DELETE FROM Item WHERE id = :id";
+        try {
+            $conn = $this->getInstanceConnection();
 
-        $stmt = $this->getInstanceConnection()->prepare($sql);
+            $conn->beginTransaction();
+            $sql = "DELETE FROM Item WHERE id = :id";
+            $stmt = $this->getInstanceConnection()->prepare($sql);
+            $stmt->execute(
+                array(
+                    ':id' => $id
+                )
+            );
+            $conn->commit();
 
-        $stmt->execute(
-            array(
-                ':id' => $id
-            )
-        );
-
-        $affected_rows = $stmt->rowCount();
-
-        return $affected_rows;
+            $affected_rows = $stmt->rowCount();
+            return $affected_rows . " record delete successfully.";
+        } catch(PDOException $e) {
+            $conn->rollback();
+            return $sql . "<br>" . $e->getMessage();
+        }
     }
-
 }
 
 
