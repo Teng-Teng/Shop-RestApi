@@ -47,7 +47,7 @@ class Database {
             $conn->commit();
 
             $affected_rows = $stmt->rowCount();
-            return $affected_rows . " record insert successfully. ";
+            return $affected_rows . " record insert successfully.";
         } catch(PDOException $e) {
             $conn->rollback();
             return $sql . "<br>" . $e->getMessage();

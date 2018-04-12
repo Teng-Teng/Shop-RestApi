@@ -43,23 +43,24 @@
                 <button id="selectAll" >SelectAll</button>
             </div>
             <div class="insert hidden">
-                Product ID: <input type="text" name="ins_p_id"><br>
-                <button >Insert</button>
+                Product Name: <input type="text" name="ins_name"><br>
+                Product Price: <input type="text" name="ins_price"><br>
+                Image Url: <input type="text" name="ins_url"><br>
+                Description: <input type="text" name="ins_desc"><br>
+                <button id="insert">Insert</button>
             </div>
             <div class="update hidden">
-                Product ID: <input type="text" name="upd_p_id"><br>
-                Quantity from&nbsp;<input type="number" name="upd_p_q_orign">&nbsp;to&nbsp;<input type="number" name="upd_p_q_cur"><br>
-                <button >Update</button>
+                Product ID: <input type="text" name="upd_id"><br>
+                Price From&nbsp;<input type="number" name="upd_orign">&nbsp;to&nbsp;<input type="number" name="upd_cur"><br>
+                <button id="update">Update</button>
             </div>
             <div class="delete hidden">
-                Product ID: <input type="text" name="del_p_id"><br>
-                <button >Delete</button>
+                Product ID: <input type="text" name="del_id"><br>
+                <button id="delete">Delete</button>
             </div>
         </div>
         <br>
-        <div id="result">
-
-        </div>
+        <div id="result"></div>
 
         <div class="form-group">
             <label for="">Name:</label>
@@ -227,6 +228,101 @@
                     console.dir( xhr );
                 });
         });
+
+        $("#insert").click(function(){
+            var ins_name = $("input[name='ins_name']").val();
+            var ins_price = $("input[name='ins_price']").val();
+            var ins_url = $("input[name='ins_url']").val();
+            var ins_desc = $("input[name='ins_desc']").val();
+
+            $.ajax({
+                // The URL for the request
+                url: "http://192.168.33.10/Shop-Rest/Shop-RestApi/manage/insert",
+                // The data to send (will be converted to a query string)
+                data: {
+                    ins_name   : ins_name,
+                    ins_price  : ins_price,
+                    ins_url    : ins_url,
+                    ins_desc   : ins_desc
+                },
+                // Whether this is a POST or GET request
+                type: "POST",
+                // The type of data we expect back
+                dataType : "json",
+                success : function(data, textStatus, jqXHR){
+
+                    $('#result').html(data);
+                }
+            })
+            // Code to run if the request fails; the raw request and
+            // status codes are passed to the function
+                .fail(function( xhr, status, errorThrown ) {
+                    alert( "Sorry, there was a problem!" );
+                    console.log( "Error: " + errorThrown );
+                    console.log( "Status: " + status );
+                    console.dir( xhr );
+                });
+        });
+
+        $("#update").click(function(){
+            var upd_id = $("input[name='upd_id']").val();
+            var upd_cur = $("input[name='upd_cur']").val();
+
+            $.ajax({
+                // The URL for the request
+                url: "http://192.168.33.10/Shop-Rest/Shop-RestApi/find/update",
+                // The data to send (will be converted to a query string)
+                data: {
+                    upd_id   : upd_id,
+                    upd_cur  : upd_cur
+                },
+                // Whether this is a POST or GET request
+                type: "POST",
+                // The type of data we expect back
+                dataType : "json",
+                success : function(data, textStatus, jqXHR){
+
+                    $('#result').html(data);
+                }
+            })
+            // Code to run if the request fails; the raw request and
+            // status codes are passed to the function
+                .fail(function( xhr, status, errorThrown ) {
+                    alert( "Sorry, there was a problem!" );
+                    console.log( "Error: " + errorThrown );
+                    console.log( "Status: " + status );
+                    console.dir( xhr );
+                });
+        });
+
+        $("#delete").click(function(){
+            var del_id = $("input[name='del_id']").val();
+
+            $.ajax({
+                // The URL for the request
+                url: "http://192.168.33.10/Shop-Rest/Shop-RestApi/manage/delete",
+                // The data to send (will be converted to a query string)
+                data: {
+                    del_id   : del_id
+                },
+                // Whether this is a POST or GET request
+                type: "POST",
+                // The type of data we expect back
+                dataType : "json",
+                success : function(data, textStatus, jqXHR){
+                    $('#result').html(data);
+                }
+            })
+            // Code to run if the request fails; the raw request and
+            // status codes are passed to the function
+                .fail(function( xhr, status, errorThrown ) {
+                    alert( "Sorry, there was a problem!" );
+                    console.log( "Error: " + errorThrown );
+                    console.log( "Status: " + status );
+                    console.dir( xhr );
+                });
+        });
+
 
 
     })

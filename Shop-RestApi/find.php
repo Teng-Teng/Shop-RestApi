@@ -28,11 +28,14 @@ class find {
         return json_encode($result);
     }
 
-    public function updateItem($id, $price) {
+    public function updateItem() {
+        $id = $_POST['upd_id'];
+        $price = $_POST['upd_cur'];
+
         $conn = new Database();
         $result = $conn->updateItem($id, $price);
 
-        return $result;
+        return json_encode($result);
     }
 
 
