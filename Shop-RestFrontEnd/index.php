@@ -34,12 +34,17 @@
         <p class="lead">This is a restful api demo to add an email template to backend server by ajax and json</p>
         <hr class="my-4">
 
-        <div><a id="select_c" href="#q4">Select</a>|<a id="update_c" href="#q4">Update</a>|<a id="delete_c" href="#q4">Delete</a></div>
+        <div><a id="select_c" href="#">Select</a>|<a id="insert_c" href="#">Insert</a>|<a id="update_c" href="#">Update</a>|<a id="delete_c" href="#">Delete</a></div>
         <div>
             <div class="select active">
-                Product ID: <input type="text" name="sel_p_id"><br>
-                Product Name:<input type="text" name="sel_p_name"><br>
-                <button disabled>Select</button>
+                Product ID: <input type="text" name="sel_id"><br>
+                Product Name:<input type="text" name="sel_name"><br>
+                <button id="select" disabled>Select</button>
+                <button id="selectAll" >SelectAll</button>
+            </div>
+            <div class="insert hidden">
+                Product ID: <input type="text" name="ins_p_id"><br>
+                <button >Insert</button>
             </div>
             <div class="update hidden">
                 Product ID: <input type="text" name="upd_p_id"><br>
@@ -79,27 +84,7 @@
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-<script>
-    $('#add_template').click(function() {
-        var content = $('#tcontent').val();
-        var name = $('#tname').val();
-        var vars = $('#tvar').val();
-        $.post(
-            "http://192.168.33.10/EmailSystem-Mandrill/EmailSystem-API/templates/save",
-            {
-                "content": content,
-                "name": name,
-                "var": vars
-            },
-            function(data) {
-                $('#info').html(data.message);
-            },
-            "json"
 
-        );
-
-    });
-</script>
 <script type="text/javascript">
     $(document).ready(function(){
         $('a').click(function(){
@@ -118,6 +103,70 @@
             //complete the jquery control for update and delete button.
         });
 
+        $("#select").click(function(){
+            var sel_id = $("input[name='sel_id']").val();
+
+            $.ajax({
+                // The URL for the request
+                //url: "demo_get_post.php",
+                url: "http://192.168.33.10/Shop-Rest/Shop-RestApi/find/select",
+                // The data to send (will be converted to a query string)
+                data: {
+                    sel_id  : sel_id
+                },
+                // Whether this is a POST or GET request
+                type: "POST",
+                // The type of data we expect back
+                dataType : "json",
+                success : function(data, textStatus, jqXHR){
+                    var id          = data.id;
+                    var name        = data.name;
+                    var price       = data.price;
+                    var image_url   = data.image_url;
+                    var description = data.description;
+
+                    
+
+                    var htmlTemplate =
+                        `
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">NAME</th>
+                                    <th scope="col">PRICE</th>
+                                    <th scope="col">IMAGE_URL</th>
+                                    <th scope="col">DESCRIPTION</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>`+ id +`</td>
+                                    <td>`+ name +`</td>
+                                    <td>`+ price +`</td>
+                                    <td>`+ image_url +`</td>
+                                    <td>`+ description +`</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        `;
+
+                    $('#result').append(htmlTemplate);
+
+                }
+            })
+                // Code to run if the request fails; the raw request and
+                // status codes are passed to the function
+                .fail(function( xhr, status, errorThrown ) {
+                    alert( "Sorry, there was a problem!" );
+                    console.log( "Error: " + errorThrown );
+                    console.log( "Status: " + status );
+                    console.dir( xhr );
+                });
+
+
+        });
 
     })
 </script>

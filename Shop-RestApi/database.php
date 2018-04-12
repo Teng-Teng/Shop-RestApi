@@ -21,27 +21,6 @@ class Database {
         return $this->connection;
     }
 
-    public function getAllItems() {
-        try {
-            $conn = $this->getInstanceConnection();
-
-            $conn->beginTransaction();
-            $sql = "SELECT * FROM Item";
-            //create a PDO statement object from connection object
-            // $pdo object run query function and this function return a statement object
-            $stmt = $conn->query($sql);
-            $conn->commit();
-
-            //execute the statement and get all the results
-//            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            $result = $stmt->fetchAll();
-            return $result;
-        } catch(PDOException $e) {
-            $conn->rollback();
-            return $sql . "<br>" . $e->getMessage();
-        }
-    }
-
     /**
      * @param $name
      * @param $price
@@ -75,7 +54,28 @@ class Database {
         }
     }
 
-    public function getItemById($id) {
+    public function selectAllItems() {
+        try {
+            $conn = $this->getInstanceConnection();
+
+            $conn->beginTransaction();
+            $sql = "SELECT * FROM Item";
+            //create a PDO statement object from connection object
+            // $pdo object run query function and this function return a statement object
+            $stmt = $conn->query($sql);
+            $conn->commit();
+
+            //execute the statement and get all the results
+//            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $result = $stmt->fetchAll();
+            return $result;
+        } catch(PDOException $e) {
+            $conn->rollback();
+            return $sql . "<br>" . $e->getMessage();
+        }
+    }
+
+    public function selectItemById($id) {
         try {
             $conn = $this->getInstanceConnection();
 
@@ -90,14 +90,15 @@ class Database {
             $conn->commit();
 
             $Item = $stmt->fetch();
-            $result = array(
-                'id' => $Item['id'],
-                'name' => $Item['name'],
-                'price' => $Item['price'],
-                'imageUrl' => $Item['image_url'],
-                'description' => $Item['description']
-            );
-            return $result;
+//            $result = array(
+//                'id' => $Item['id'],
+//                'name' => $Item['name'],
+//                'price' => $Item['price'],
+//                'imageUrl' => $Item['image_url'],
+//                'description' => $Item['description']
+//            );
+//            return $result;
+            return $Item;
         } catch(PDOException $e) {
             $conn->rollback();
             return $sql . "<br>" . $e->getMessage();

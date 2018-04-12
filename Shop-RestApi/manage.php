@@ -10,7 +10,7 @@ class manage {
     /**
      *
      */
-    public function addItem($name, $price, $imageUrl, $description) {
+    public function insertItem($name, $price, $imageUrl, $description) {
         $conn = new Database();
         $affected_rows = $conn->insertItem($name, $price, $imageUrl, $description);
 

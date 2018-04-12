@@ -10,9 +10,9 @@ class find {
     /**
      *
      */
-    public function getItem() {
+    public function selectAllItem() {
         $conn = new Database();
-        $result = $conn->getAllItems();
+        $result = $conn->selectAllItems();
 
         return $result;
     }
@@ -20,15 +20,12 @@ class find {
     /**
      * @param $id
      */
-    public function findItem($id) {
+    public function selectItem() {
+        $id = $_POST['sel_id'];
         $conn = new Database();
-        $result = $conn->getItemById($id);
+        $result = $conn->selectItemById($id);
 
-//        echo '<pre>';
-//        print_r($result);
-//        echo '</pre>';
-
-        return $result;
+        return json_encode($result);
     }
 
     public function updateItem($id, $price) {
