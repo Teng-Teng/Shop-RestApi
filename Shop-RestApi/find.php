@@ -14,7 +14,7 @@ class find {
         $conn = new Database();
         $result = $conn->selectAllItems();
 
-        return $result;
+        return json_encode($result);
     }
 
     /**

@@ -125,8 +125,7 @@
                     var image_url   = data.image_url;
                     var description = data.description;
 
-                    
-
+                    $('#result').html("");
                     var htmlTemplate =
                         `
                         <table class="table">
@@ -164,9 +163,71 @@
                     console.log( "Status: " + status );
                     console.dir( xhr );
                 });
-
-
         });
+
+        $("#selectAll").click(function(){
+            $.ajax({
+                // The URL for the request
+                //url: "demo_get_post.php",
+                url: "http://192.168.33.10/Shop-Rest/Shop-RestApi/find/selectAll",
+                // The data to send (will be converted to a query string)
+                data: {},
+                // Whether this is a POST or GET request
+                type: "POST",
+                // The type of data we expect back
+                dataType : "json",
+                success : function(data, textStatus, jqXHR){
+                    $('#result').html("");
+
+                    var htmlForEachTemplate =
+                        `<table class="table">
+                            <thead>
+                            <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">NAME</th>
+                            <th scope="col">PRICE</th>
+                            <th scope="col">IMAGE_URL</th>
+                            <th scope="col">DESCRIPTION</th>
+                            </tr>
+                            </thead>
+                            <tbody>`;
+
+                    $.each(data, function(key, value) {
+                        var id          = value.id;
+                        var name        = value.name;
+                        var price       = value.price;
+                        var image_url   = value.image_url;
+                        var description = value.description;
+
+                        htmlForEachTemplate +=
+                            `
+						    <tr>
+                                <td>`+ id +`</td>
+                                <td>`+ name +`</td>
+                                <td>`+ price +`</td>
+                                <td>`+ image_url +`</td>
+                                <td>`+ description +`</td>
+                            </tr>
+
+	    				`;
+                    });
+                    htmlForEachTemplate +=
+                        `</tbody>
+                            </table> `
+                    ;
+                    $('#result').append(htmlForEachTemplate);
+                }
+            })
+            // Code to run if the request fails; the raw request and
+            // status codes are passed to the function
+                .fail(function( xhr, status, errorThrown ) {
+                    alert( "Sorry, there was a problem!" );
+                    console.log( "Error: " + errorThrown );
+                    console.log( "Status: " + status );
+                    console.dir( xhr );
+                });
+        });
+
 
     })
 </script>
